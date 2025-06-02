@@ -1,6 +1,9 @@
 /** @type {import('next').NextConfig} */
+const repoName = 'resi-build-1';
 const nextConfig = {
   output: 'export',
+  basePath: `/${repoName}`,
+  assetPrefix: `/${repoName}/`,
   eslint: {
     ignoreDuringBuilds: true,
   },
