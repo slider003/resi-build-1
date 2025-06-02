@@ -7,7 +7,7 @@ import { ThemeProvider } from "@/components/theme-provider"
 const inter = Inter({ subsets: ["latin"] })
 
 export const metadata: Metadata = {
-  title: "StreamLine - Simplify Your Workflow",
+  title: "ResiBuild",
   description: "Boost productivity, reduce overhead, and focus on what matters most with our all-in-one platform.",
     generator: 'v0.dev'
 }
