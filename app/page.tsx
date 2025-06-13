@@ -1,10 +1,10 @@
 "use client"
 
-import { useState } from "react"
+import { useState, useEffect } from "react"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs"
-import { Download, User, Briefcase, GraduationCap, Code, Save } from "lucide-react"
+import { Download, User, Briefcase, GraduationCap, Code } from "lucide-react"
 import { PersonalInfoForm } from "@/components/personal-info-form"
 import { ExperienceForm } from "@/components/experience-form"
 import { EducationForm } from "@/components/education-form"
@@ -54,20 +54,39 @@ export type ResumeData = {
 
 export default function ResumePage() {
   const { toast } = useToast()
-  const [resumeData, setResumeData] = useState<ResumeData>({
-    personalInfo: {
-      name: "",
-      title: "",
-      email: "",
-      phone: "",
-      location: "",
-      summary: "",
-    },
-    experience: [],
-    education: [],
-    skills: [],
+  const [resumeData, setResumeData] = useState<ResumeData>(() => {
+    // Try to load data from localStorage
+    if (typeof window !== 'undefined') {
+      const savedData = localStorage.getItem('resumeData')
+      if (savedData) {
+        try {
+          return JSON.parse(savedData)
+        } catch (e) {
+          console.error('Failed to parse saved resume data:', e)
+        }
+      }
+    }
+    // Default data if nothing in localStorage
+    return {
+      personalInfo: {
+        name: "",
+        title: "",
+        email: "",
+        phone: "",
+        location: "",
+        summary: "",
+      },
+      experience: [],
+      education: [],
+      skills: [],
+    }
   })
 
+  // Save to localStorage whenever data changes
+  useEffect(() => {
+    localStorage.setItem('resumeData', JSON.stringify(resumeData))
+  }, [resumeData])
+  
   const updatePersonalInfo = (data: ResumeData["personalInfo"]) => {
     setResumeData((prev) => ({
       ...prev,
@@ -96,23 +115,6 @@ export default function ResumePage() {
     }))
   }
 
-  const handleSave = () => {
-    const dataStr = JSON.stringify(resumeData)
-    const dataUri = "data:application/json;charset=utf-8," + encodeURIComponent(dataStr)
-
-    const exportFileDefaultName = "resume-data.json"
-
-    const linkElement = document.createElement("a")
-    linkElement.setAttribute("href", dataUri)
-    linkElement.setAttribute("download", exportFileDefaultName)
-    linkElement.click()
-
-    toast({
-      title: "Resume data saved",
-      description: "Your resume data has been saved to a JSON file.",
-    })
-  }
-
   const handlePrint = () => {
     window.print()
     toast({
@@ -131,11 +133,10 @@ export default function ResumePage() {
             <span className="text-xl font-bold">Resume Builder</span>
           </div>
           <div className="flex items-center gap-4">
-            <Button variant="outline" size="sm" onClick={handleSave}>
-              <Save className="mr-2 h-4 w-4" />
-              Save
-            </Button>
-            <Button size="sm" onClick={handlePrint}>
+            <p className="text-sm text-muted-foreground mr-4">
+              Changes are saved locally in your browser. Export as PDF to keep permanently.
+            </p>
+            <Button size="sm" onClick={handlePrint} className="whitespace-nowrap">
               <Download className="mr-2 h-4 w-4" />
               Export PDF
             </Button>

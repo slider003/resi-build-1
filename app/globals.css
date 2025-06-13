@@ -96,10 +96,17 @@ body {
 }
 
 @media print {
+  /* Remove URL, date, and page information from print/PDF */
   @page {
     margin: 0.5in;
+    size: auto;
   }
 
+  /* Hide browser-generated content */
+  @page :first {
+    margin-top: 0;
+  }
+  
   body {
     -webkit-print-color-adjust: exact !important;
     print-color-adjust: exact !important;
